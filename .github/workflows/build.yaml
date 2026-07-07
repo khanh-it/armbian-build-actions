@@ -1,0 +1,26 @@
+name: Build Armbian Image
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest # ubuntu-24.04-arm, ubuntu-24.04-riscv
+    steps:
+      - uses: armbian/build@main
+        with:
+          armbian_token: ${{ secrets.GITHUB_TOKEN }}
+          armbian_board: "" # orangepi5 bananapif3
+          armbian_release: "" # noble resolute trixie
+          armbian_target: "" # build kernel
+          armbian_branch: "main"
+          armbian_kernel_branch: "" # edge current vendor
+          armbian_ui: "" # server minimal xfce gnome
+          armbian_runner_clean: "yes" # recommended for Github runners
+        continue-on-error: true
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: armbian-image
+          path: build/output/images/*.*
+          retention-days: 7
